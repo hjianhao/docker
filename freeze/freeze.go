@@ -2,14 +2,14 @@ package main
 
 import (
 	"context"
+	"flag"
 	"io"
 	"os"
 	"time"
-    "flag"
 
 	"fmt"
 	"github.com/docker/docker/api/types"
-    "github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"sync"
 )
@@ -45,7 +45,7 @@ func PauseAndResume(ctx context.Context, cli *client.Client, id string) {
 	var pauseTotal, resumeTotal int64 = 0, 0
 
 	for i := 0; i < 100; i++ {
-        start := time.Now()
+		start := time.Now()
 		cli.ContainerPause(ctx, id)
 		end := time.Now()
 		pauseTotal += (end.Sub(start).Nanoseconds()) / 1000000
@@ -56,7 +56,7 @@ func PauseAndResume(ctx context.Context, cli *client.Client, id string) {
 		resumeTotal += (end.Sub(start).Nanoseconds()) / 1000000
 	}
 
-	fmt.Printf("container %s, Average pause time : %d ms, average resume time : %d ms. \n", id, pauseTotal / 100, resumeTotal / 100)
+	fmt.Printf("container %s, Average pause time : %d ms, average resume time : %d ms. \n", id, pauseTotal/100, resumeTotal/100)
 }
 
 func main() {
@@ -66,35 +66,35 @@ func main() {
 		panic(err)
 	}
 
-    var concurrency int
-    flag.IntVar(&concurrency, "c", 1, "concurrency")
-    flag.Parse()
-    fmt.Printf("Concurrency %d\n", concurrency)
+	var concurrency int
+	flag.IntVar(&concurrency, "c", 1, "concurrency")
+	flag.Parse()
+	fmt.Printf("Concurrency %d\n", concurrency)
 
-    var wg sync.WaitGroup
-    wg.Add(concurrency)
-    ids := make ([]string, concurrency, concurrency)
-    for i := 0; i < concurrency; i++ {
-        go func (index int) {
-            ids[index], err = runContainer(ctx, cli)
-            if err != nil {
-                panic(err)
-            }
-            wg.Done()
-        } (i)
-    }
-    wg.Wait()
+	var wg sync.WaitGroup
+	wg.Add(concurrency)
+	ids := make([]string, concurrency, concurrency)
+	for i := 0; i < concurrency; i++ {
+		go func(index int) {
+			ids[index], err = runContainer(ctx, cli)
+			if err != nil {
+				panic(err)
+			}
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
 
 	wg.Add(concurrency)
 
-    for i := 0; i < concurrency; i++ {
-        go func(id string) {
-            PauseAndResume(ctx, cli, id)
+	for i := 0; i < concurrency; i++ {
+		go func(id string) {
+			PauseAndResume(ctx, cli, id)
 
-            stopContainer(ctx, cli, id)
-            wg.Done()
-        }(ids[i])
-    }
+			stopContainer(ctx, cli, id)
+			wg.Done()
+		}(ids[i])
+	}
 
 	wg.Wait()
 }
