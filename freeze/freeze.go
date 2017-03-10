@@ -70,14 +70,21 @@ func main() {
     flag.IntVar(&concurrency, "c", 1, "concurrency")
     flag.Parse()
     fmt.Printf("Concurrency %d\n", concurrency)
+
+    var wg sync.WaitGroup
+    wg.Add(concurrency)
     ids := make ([]string, concurrency, concurrency)
     for i := 0; i < concurrency; i++ {
-        ids[i], err = runContainer(ctx, cli)
-        if err != nil {
-            panic(err)
-        }
+        go func (index int) {
+            ids[index], err = runContainer(ctx, cli)
+            if err != nil {
+                panic(err)
+            }
+            wg.Done()
+        } (i)
     }
-	var wg sync.WaitGroup
+    wg.Wait()
+
 	wg.Add(concurrency)
 
     for i := 0; i < concurrency; i++ {
