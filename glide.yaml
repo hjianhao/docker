@@ -4,3 +4,4 @@ import:
   version: v17.03.0-ce-rc1
   subpackages:
   - client
+- package: github.com/crosbymichael/cgroups

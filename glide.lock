@@ -1,6 +1,12 @@
-hash: 21fa34d6953f854457b309d51337db1c8a7df2b1962eaf87fa00b2a30af8784f
-updated: 2017-03-10T21:13:34.467834833+08:00
+hash: fb816c750ed5a39eb0f8fea8fd64aaff9ee8ece1468dc55bccff348a54c95534
+updated: 2017-03-12T21:35:33.862298285+08:00
 imports:
+- name: github.com/coreos/go-systemd
+  version: e97b35f834b17eaa82afe3d44715c34736bfa12b
+  subpackages:
+  - dbus
+- name: github.com/crosbymichael/cgroups
+  version: 64d6bd149c59fa0f2aad3b31773827c119d80392
 - name: github.com/docker/distribution
   version: 99cb7c0946d2f5a38015443e515dc916295064d7
   subpackages:
@@ -33,12 +39,20 @@ imports:
   - tlsconfig
 - name: github.com/docker/go-units
   version: e30f1e79f3cd72542f2026ceec18d3bd67ab859c
+- name: github.com/godbus/dbus
+  version: fe0e1d54eaeda11a9979659a8d32f459e88bee75
 - name: github.com/Microsoft/go-winio
   version: 24a3e3d3fc7451805e09d11e11e95d9a0a4f205e
 - name: github.com/opencontainers/runc
   version: 083933fb9092a3d65d682ba34a08676104c95462
   subpackages:
+  - libcontainer/system
   - libcontainer/user
+  - libcontainer/utils
+- name: github.com/opencontainers/runtime-spec
+  version: 55e1a84c1fbb21da305e861957cffed167679db1
+  subpackages:
+  - specs-go
 - name: github.com/pkg/errors
   version: bfd5150e4e41705ded2129ec33379de1cb90b513
 - name: github.com/Sirupsen/logrus
